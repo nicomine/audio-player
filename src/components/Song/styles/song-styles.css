@@ -10,18 +10,22 @@
   align-items: center;
   justify-content: center;
 
-  min-width: 15rem;
+  min-width: 25rem;
   min-height: 15rem;
 
   background-color: rgb(223, 181, 181);
-  padding: 3rem 5rem 8rem;
+  /* padding: 3rem 5rem 8rem; */
+  padding: min(5rem, 8%);
   border-radius: 1rem;
   font-family: "Silkscreen", sans-serif;
 }
 
 .song-image {
-  width: 15rem;
-  height: 15rem;
+  width: 100%;
+  max-width: 20rem;
+
+  height: auto;
+  max-height: 20rem;
   border-radius: 10%;
   object-fit: cover;
   -webkit-box-shadow: 0px 12px 20px -1px rgba(97, 97, 97, 0.47);
