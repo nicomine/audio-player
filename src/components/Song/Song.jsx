@@ -6,80 +6,128 @@ import "./styles/song-styles.css";
 import { SONGS } from "../../constants/SONGS";
 
 export const Song = () => {
-  const time = useRef(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [currentSong, setCurrentSong] = useState(SONGS[0]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-  const [play, setPlay] = useState(false);
+  const searchSong = useRef(0);
+  const audioRef = useRef(currentSong);
 
-  const selectSong = useRef(0);
-  const [songData, setSongData] = useState(SONGS[0]);
-  const currentSong = useRef();
+  const handleChangeNextSong = () => {
+    console.log(searchSong.current);
+    if (searchSong.current === SONGS.length - 1) {
+      searchSong.current = 0;
+      return setCurrentSong(SONGS[0]);
+    }
 
-  const handlePlayAudio = () => {
-    console.log(currentSong.current);
-    if (currentSong.current.paused) {
-      currentSong.current.play();
-      setPlay(true);
+    searchSong.current = searchSong.current + 1;
+    setCurrentSong(SONGS[searchSong.current]);
+  };
+
+  const handleUpdateTime = () => {
+    setCurrentTime(audioRef.current.currentTime);
+  };
+
+  const handleChangePrevSong = () => {
+    console.log(searchSong.current);
+    if (searchSong.current === 0) {
+      searchSong.current = 1;
+      return setCurrentSong(SONGS[SONGS.length - 1]);
+    }
+
+    searchSong.current = searchSong.current - 1;
+    setCurrentSong(SONGS[searchSong.current]);
+  };
+
+  const handleSeek = (e) => {
+    audioRef.current.currentTime = e.target.value;
+    setCurrentTime(e.target.value);
+  };
+
+  const handlePlay = () => {
+    audioRef.current.play();
+    return setIsPlaying(true);
+  };
+
+  const handlePause = () => {
+    audioRef.current.pause();
+    setIsPlaying(false);
+  };
+
+  const handleActionAudio = () => {
+    if (isPlaying === true) {
+      handlePause();
     } else {
-      currentSong.current.pause();
-      setPlay(false);
+      handlePlay();
     }
   };
 
-  const handleChangeSongForward = () => {
-    selectSong.current++;
 
-    setSongData(SONGS.find((song) => song.id === selectSong.current));
-  };
+  const formatTime = (seconds) => {
+    if (isNaN(seconds)) return "0:00";
 
-  const handleChangeSongBackward = () => {
-    if (selectSong.current === 0) {
-      return;
-    }
-    selectSong.current--;
-    setSongData(SONGS.find((song) => song.id === selectSong.current));
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    const paddedSecs = secs < 10 ? `0${secs}` : secs;
+
+    return `${minutes}:${paddedSecs}`;
   };
 
   useEffect(() => {
-    const selectedSong = SONGS.filter((song) => song.id === selectSong.current);
+    let interval;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        handleUpdateTime();
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+  }, [isPlaying, currentTime]);
 
-    console.log("puto", selectedSong);
-  }, [selectSong]);
+ 
 
-  // const [time, setTime] = useState(0);
-
-  // useEffect(() => {
-  //   if (time >= 100) return;
-
-  //   const interval = setInterval(() => {
-  //     setTime((prevTime) => prevTime + 1);
-  //   }, 1000);
-  //   console.log(time);
-  //   return () => clearInterval(interval);
-  // }, [time]);
+  useEffect(() => {
+    setDuration(currentSong.duration);
+  }, [currentSong]);
 
   return (
     <div className="audio-container">
       <img src={Gabe} className="song-image" />
-      <audio src={songData.src} ref={currentSong}></audio>
-      <p className="song-name">Current song is bullshit aaaaaaaaaaaaaaaaaaaa</p>
-      <progress className="progress-bar" max="100" min="0" value={time} />
+      <audio ref={audioRef} src={currentSong.src} autoPlay={true}></audio>
+      <p className="song-name">{currentSong.name}</p>
+      <p>{currentSong.autor}</p>
+      <input
+        type="range"
+        min={0}
+        max={duration}
+        value={currentTime}
+        onChange={handleSeek}
+      />
+      <div className="timer">
+        <p>{formatTime(currentTime)}</p>
+        <p>{formatTime(duration)}</p>
+      </div>
+
       <div className="button-container">
         <button
           className="material-symbols-outlined"
-          onClick={handleChangeSongBackward}
+          onClick={handleChangePrevSong}
         >
           skip_previous
         </button>
-        <button className="material-symbols-outlined" onClick={handlePlayAudio}>
-          {play ? "play_arrow" : "stop"}
+        <button
+          className="material-symbols-outlined"
+          onClick={handleActionAudio}
+        >
+          a
         </button>
         <button
           className="material-symbols-outlined"
-          onClick={handleChangeSongForward}
+          onClick={handleChangeNextSong}
         >
           skip_next
         </button>
-        <button onClick={() => console.log(songData)}>puto</button>
       </div>
     </div>
   );

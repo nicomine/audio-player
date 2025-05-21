@@ -16,6 +16,7 @@
   background-color: rgb(223, 181, 181);
   padding: 3rem 5rem 8rem;
   border-radius: 1rem;
+  font-family: "Silkscreen", sans-serif;
 }
 
 .song-image {
@@ -31,10 +32,10 @@
 .song-name {
   width: 15rem;
   margin: 3rem 0 2rem 0;
-  font-family: "Silkscreen", sans-serif;
+
   font-size: 1.5rem;
   overflow: hidden;
-  white-space:nowrap;
+  white-space: nowrap;
   text-overflow: ellipsis;
   text-align: center;
 }
