@@ -63,7 +63,6 @@ export const Song = () => {
     }
   };
 
-
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return "0:00";
 
@@ -85,8 +84,6 @@ export const Song = () => {
     }
   }, [isPlaying, currentTime]);
 
- 
-
   useEffect(() => {
     setDuration(currentSong.duration);
   }, [currentSong]);
@@ -96,13 +93,14 @@ export const Song = () => {
       <img src={Gabe} className="song-image" />
       <audio ref={audioRef} src={currentSong.src} autoPlay={true}></audio>
       <p className="song-name">{currentSong.name}</p>
-      <p>{currentSong.autor}</p>
+      <p className="artist-name">{currentSong.autor}</p>
       <input
         type="range"
         min={0}
         max={duration}
         value={currentTime}
         onChange={handleSeek}
+        className="progress-bar"
       />
       <div className="timer">
         <p>{formatTime(currentTime)}</p>
@@ -120,7 +118,7 @@ export const Song = () => {
           className="material-symbols-outlined"
           onClick={handleActionAudio}
         >
-          a
+          {isPlaying ? 'play_arrow' : 'pause'}
         </button>
         <button
           className="material-symbols-outlined"
